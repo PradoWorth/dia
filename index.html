@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="purple">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusOS — Dashboard de Produtividade</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-mark">◆</span>
+    <span class="brand-text">FocusOS</span>
+  </div>
+
+  <nav class="nav" id="mainNav">
+    <button class="nav-item active" data-section="dashboard">
+      <span class="nav-icon">⌂</span><span class="nav-label">Dashboard</span>
+    </button>
+    <button class="nav-item" data-section="timer">
+      <span class="nav-icon">◔</span><span class="nav-label">Focus Timer</span>
+    </button>
+    <button class="nav-item" data-section="estudos">
+      <span class="nav-icon">▤</span><span class="nav-label">Estudos</span>
+    </button>
+    <button class="nav-item" data-section="financeiro">
+      <span class="nav-icon">◈</span><span class="nav-label">Financeiro</span>
+    </button>
+    <button class="nav-item" data-section="metas">
+      <span class="nav-icon">◎</span><span class="nav-label">Metas</span>
+    </button>
+    <button class="nav-item" data-section="historico">
+      <span class="nav-icon">≣</span><span class="nav-label">Histórico</span>
+    </button>
+    <button class="nav-item" data-section="conquistas">
+      <span class="nav-icon">★</span><span class="nav-label">Conquistas</span>
+    </button>
+    <button class="nav-item" data-section="geral">
+      <span class="nav-icon">◫</span><span class="nav-label">Dashboard Geral</span>
+    </button>
+    <button class="nav-item" data-section="config">
+      <span class="nav-icon">⚙</span><span class="nav-label">Configurações</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="streak-chip" id="sidebarStreak">
+      <span class="fire">🔥</span> <span id="sidebarStreakValue">0</span> dias
+    </div>
+    <button class="btn-ghost btn-sm" id="focusModeBtn" title="Modo Foco (Ctrl+.)">Modo Foco</button>
+  </div>
+</aside>
+
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+
+<!-- ================= MAIN ================= -->
+<div class="app-main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="icon-btn only-mobile" id="hamburgerBtn">☰</button>
+
+    <div class="topbar-search" id="openSearchBtn">
+      <span class="search-icon">⌕</span>
+      <span class="search-placeholder">Pesquisar tarefas, matérias, contas…</span>
+      <kbd>Ctrl K</kbd>
+    </div>
+
+    <div class="topbar-right">
+      <div class="clock-block">
+        <div class="clock-time" id="clockTime">00:00:00</div>
+        <div class="clock-date" id="clockDate">—</div>
+      </div>
+      <button class="icon-btn" id="shortcutsBtn" title="Atalhos (?)">⌨</button>
+      <button class="icon-btn" id="exportBtn" title="Exportar / Backup">⇩</button>
+    </div>
+  </header>
+
+  <!-- ============ SECTION: DASHBOARD ============ -->
+  <section class="view active" id="view-dashboard">
+    <div class="view-head">
+      <h1 id="greetingText">Olá 👋</h1>
+      <p class="muted" id="motivationalQuote">Carregando frase do dia…</p>
+    </div>
+
+    <div class="grid grid-4 stagger">
+      <div class="card glass stat-card">
+        <div class="stat-label">Progresso geral do dia</div>
+        <div class="stat-value" id="statDayProgress">0%</div>
+        <div class="bar-track"><div class="bar-fill" id="statDayProgressBar"></div></div>
+      </div>
+      <div class="card glass stat-card">
+        <div class="stat-label">Tempo focado hoje</div>
+        <div class="stat-value" id="statFocusedToday">0m</div>
+        <div class="stat-sub" id="statFocusedTodayGoal">Meta: 2h</div>
+      </div>
+      <div class="card glass stat-card">
+        <div class="stat-label">Streak</div>
+        <div class="stat-value" id="statStreak">0 <span class="stat-unit">dias</span></div>
+        <div class="stat-sub" id="statStreakLongest">Recorde: 0</div>
+      </div>
+      <div class="card glass stat-card">
+        <div class="stat-label">Meta diária</div>
+        <div class="stat-value" id="statGoal">2h</div>
+        <div class="stat-sub">Ajuste em Configurações</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card glass" id="goalNotice" style="display:none">
+        <div class="notice-row">
+          <span class="notice-dot"></span>
+          <span>Você ainda não bateu a meta de hoje. Bora focar? 💪</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card glass span-2">
+        <div class="card-title">Estatísticas</div>
+        <div class="stats-list" id="statsList"></div>
+      </div>
+      <div class="card glass">
+        <div class="card-title">Meta Mensal</div>
+        <div class="monthly-goal" id="monthlyGoalBlock"></div>
+      </div>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title-row">
+        <div class="card-title">Calendário</div>
+        <div class="cal-nav">
+          <button class="icon-btn sm" id="calPrevBtn">‹</button>
+          <span id="calLabel">—</span>
+          <button class="icon-btn sm" id="calNextBtn">›</button>
+        </div>
+      </div>
+      <div class="calendar" id="calendarGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION: TIMER ============ -->
+  <section class="view" id="view-timer">
+    <div class="view-head">
+      <h1>Focus Timer</h1>
+      <p class="muted">Estilo Pomodoro — foque, registre, evolua.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card glass timer-card">
+        <div class="timer-display" id="timerDisplay">02:00:00</div>
+        <div class="timer-subject-row">
+          <label class="tiny-label">Matéria</label>
+          <select id="timerSubjectSelect"></select>
+        </div>
+        <div class="timer-controls">
+          <button class="btn btn-primary" id="timerStartBtn">▶ Start</button>
+          <button class="btn btn-ghost" id="timerPauseBtn">⏸ Pause</button>
+          <button class="btn btn-ghost" id="timerResetBtn">↺ Reset</button>
+        </div>
+        <div class="timer-presets" id="timerPresets">
+          <button class="chip" data-min="25">25m</button>
+          <button class="chip" data-min="50">50m</button>
+          <button class="chip" data-min="90">90m</button>
+          <button class="chip" data-min="120">2h</button>
+          <button class="chip" data-custom="1">Custom</button>
+        </div>
+      </div>
+      <div class="card glass">
+        <div class="card-title">Sessão de hoje</div>
+        <div class="today-sessions" id="todaySessionsList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION: ESTUDOS ============ -->
+  <section class="view" id="view-estudos">
+    <div class="view-head">
+      <h1>Estudos</h1>
+      <p class="muted">Matérias e tarefas do seu plano de estudos.</p>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title-row">
+        <div class="card-title">Matérias</div>
+        <div class="inline-form">
+          <input type="text" id="newSubjectInput" placeholder="Nova matéria…">
+          <button class="btn btn-primary btn-sm" id="addSubjectBtn">Adicionar</button>
+        </div>
+      </div>
+      <div class="subjects-grid" id="subjectsGrid"></div>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title-row">
+        <div class="card-title">Lista de Tarefas</div>
+        <div class="inline-form">
+          <input type="text" id="newTaskInput" placeholder="Nova tarefa…">
+          <select id="newTaskPriority">
+            <option value="alta">🔴 Alta</option>
+            <option value="media" selected>🟡 Média</option>
+            <option value="baixa">🟢 Baixa</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="addTaskBtn">Adicionar</button>
+        </div>
+      </div>
+      <div class="tasks-list" id="tasksList"></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION: FINANCEIRO ============ -->
+  <section class="view" id="view-financeiro">
+    <div class="view-head">
+      <h1>Controle Financeiro</h1>
+      <p class="muted">Contas, receitas e despesas do mês.</p>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title-row">
+        <div class="card-title">Contas</div>
+        <div class="inline-form">
+          <input type="text" id="newAccName" placeholder="Conta" style="width:120px">
+          <input type="number" id="newAccValue" placeholder="Valor" style="width:90px">
+          <input type="number" id="newAccDue" placeholder="Dia venc." min="1" max="31" style="width:90px">
+          <button class="btn btn-primary btn-sm" id="addAccountBtn">Adicionar</button>
+        </div>
+      </div>
+      <table class="data-table" id="accountsTable">
+        <thead><tr><th>Conta</th><th>Valor</th><th>Vencimento</th><th>Pago</th><th></th></tr></thead>
+        <tbody id="accountsTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card glass">
+        <div class="stat-label">Receita</div>
+        <input type="number" class="income-input" id="incomeInput" value="3000">
+      </div>
+      <div class="card glass">
+        <div class="stat-label">Despesas</div>
+        <div class="stat-value" id="statExpenses">R$0</div>
+      </div>
+      <div class="card glass">
+        <div class="stat-label">Saldo</div>
+        <div class="stat-value" id="statBalance">R$0</div>
+      </div>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title">Gráfico Financeiro</div>
+      <canvas id="financeChart" height="90"></canvas>
+    </div>
+  </section>
+
+  <!-- ============ SECTION: METAS ============ -->
+  <section class="view" id="view-metas">
+    <div class="view-head">
+      <h1>Metas de Compra &amp; Poupança</h1>
+      <p class="muted">Quer comprar algo? Crie uma meta e deixe o FocusOS calcular seu plano de investimento mensal.</p>
+    </div>
+
+    <div class="card glass" id="goalsWarning" style="display:none">
+      <div class="notice-row">
+        <span class="notice-dot"></span>
+        <span>Aviso de planejamento</span>
+      </div>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title-row">
+        <div class="card-title">Nova Meta</div>
+      </div>
+      <div class="inline-form">
+        <input type="text" id="newGoalName" placeholder="Ex: MacBook, Look novo…" style="width:180px">
+        <input type="number" id="newGoalTarget" placeholder="Valor total (R$)" style="width:140px">
+        <input type="number" id="newGoalMonthly" placeholder="Valor mensal (opcional)" style="width:160px">
+        <button class="btn btn-primary btn-sm" id="addGoalBtn">Criar meta</button>
+      </div>
+      <p class="muted" id="goalsBalanceHint" style="margin-top:10px; font-size:12.5px;"></p>
+    </div>
+
+    <div class="goals-grid" id="goalsGrid"></div>
+  </section>
+
+  <!-- ============ SECTION: HISTÓRICO ============ -->
+  <section class="view" id="view-historico">
+    <div class="view-head">
+      <h1>Histórico de Estudos</h1>
+      <p class="muted">Todas as sessões de foco registradas.</p>
+    </div>
+    <div class="card glass">
+      <table class="data-table" id="historyTable">
+        <thead><tr><th>Data</th><th>Duração</th><th>Matéria</th></tr></thead>
+        <tbody id="historyTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ SECTION: CONQUISTAS ============ -->
+  <section class="view" id="view-conquistas">
+    <div class="view-head">
+      <h1>Conquistas</h1>
+      <p class="muted">Marcos desbloqueados na sua jornada.</p>
+    </div>
+    <div class="grid grid-4" id="achievementsGrid"></div>
+  </section>
+
+  <!-- ============ SECTION: GERAL ============ -->
+  <section class="view" id="view-geral">
+    <div class="view-head">
+      <h1>Dashboard Geral</h1>
+      <p class="muted">Visão consolidada de tudo.</p>
+    </div>
+    <div class="grid grid-4" id="generalStatsGrid"></div>
+    <div class="grid grid-2">
+      <div class="card glass">
+        <div class="card-title">Horas estudadas (últimos 7 dias)</div>
+        <canvas id="weeklyTrendChart" height="110"></canvas>
+      </div>
+      <div class="card glass">
+        <div class="card-title">Tempo por matéria</div>
+        <canvas id="subjectTimeChart" height="110"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION: CONFIG ============ -->
+  <section class="view" id="view-config">
+    <div class="view-head">
+      <h1>Configurações</h1>
+      <p class="muted">Personalize sua experiência.</p>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title">Perfil</div>
+      <label class="tiny-label">Seu nome</label>
+      <input type="text" id="userNameInput" placeholder="Como devemos te chamar?">
+    </div>
+
+    <div class="card glass">
+      <div class="card-title">Meta diária (minutos)</div>
+      <input type="number" id="dailyGoalInput" min="5" step="5">
+    </div>
+
+    <div class="card glass">
+      <div class="card-title">Tema</div>
+      <div class="theme-swatches" id="themeSwatches">
+        <button class="swatch" data-theme="purple" style="--sw:#8b5cf6">Roxo</button>
+        <button class="swatch" data-theme="blue" style="--sw:#3b82f6">Azul Neon</button>
+        <button class="swatch" data-theme="gray" style="--sw:#9ca3af">Cinza</button>
+        <button class="swatch" data-theme="matte" style="--sw:#525252">Preto Fosco</button>
+      </div>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title">Preferências</div>
+      <label class="switch-row"><input type="checkbox" id="soundToggle"> Som de conclusão do timer</label>
+      <label class="switch-row"><input type="checkbox" id="notifyToggle"> Notificações de meta diária</label>
+    </div>
+
+    <div class="card glass">
+      <div class="card-title">Dados</div>
+      <div class="settings-actions">
+        <button class="btn btn-ghost" id="exportCsvBtn">Exportar CSV</button>
+        <button class="btn btn-ghost" id="exportPdfBtn">Exportar PDF</button>
+        <button class="btn btn-ghost" id="exportJsonBtn">Backup (JSON)</button>
+        <label class="btn btn-ghost file-btn">Restaurar backup<input type="file" id="importJsonInput" accept=".json" hidden></label>
+        <button class="btn btn-danger" id="resetAllBtn">Apagar tudo</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= MODALS ================= -->
+<div class="modal-overlay" id="searchModalOverlay">
+  <div class="modal glass" id="searchModal">
+    <input type="text" id="searchInput" placeholder="Pesquisar tarefas, matérias, contas…" autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="shortcutsModalOverlay">
+  <div class="modal glass">
+    <div class="card-title">Atalhos de Teclado</div>
+    <div class="shortcuts-list">
+      <div><kbd>Ctrl</kbd>+<kbd>K</kbd> Pesquisa rápida</div>
+      <div><kbd>Ctrl</kbd>+<kbd>.</kbd> Modo foco</div>
+      <div><kbd>Espaço</kbd> Start / Pause do timer (na aba Timer)</div>
+      <div><kbd>1</kbd>–<kbd>9</kbd> Trocar de seção</div>
+      <div><kbd>Ctrl</kbd>+<kbd>E</kbd> Exportar dados</div>
+      <div><kbd>?</kbd> Esta ajuda</div>
+      <div><kbd>Esc</kbd> Fechar modais</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="exportMenuOverlay">
+  <div class="modal glass">
+    <div class="card-title">Exportar &amp; Backup</div>
+    <div class="settings-actions">
+      <button class="btn btn-ghost" id="exportCsvBtn2">Exportar CSV</button>
+      <button class="btn btn-ghost" id="exportPdfBtn2">Exportar PDF</button>
+      <button class="btn btn-ghost" id="exportJsonBtn2">Backup (JSON)</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="customTimerOverlay">
+  <div class="modal glass">
+    <div class="card-title">Duração personalizada</div>
+    <div class="inline-form">
+      <input type="number" id="customTimerMinutes" min="1" placeholder="Minutos" style="width:120px">
+      <button class="btn btn-primary btn-sm" id="customTimerConfirm">Definir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Focus Mode overlay content mirrors the timer -->
+<div class="focus-overlay" id="focusOverlay">
+  <button class="icon-btn" id="exitFocusBtn">✕ Sair do modo foco</button>
+  <div class="focus-timer-display" id="focusTimerDisplay">02:00:00</div>
+  <div class="timer-controls">
+    <button class="btn btn-primary" id="focusStartBtn">▶ Start</button>
+    <button class="btn btn-ghost" id="focusPauseBtn">⏸ Pause</button>
+    <button class="btn btn-ghost" id="focusResetBtn">↺ Reset</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="utils.js"></script>
+<script src="storage.js"></script>
+<script src="timer.js"></script>
+<script src="study.js"></script>
+<script src="finance.js"></script>
+<script src="charts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
